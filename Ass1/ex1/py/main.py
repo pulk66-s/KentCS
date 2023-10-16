@@ -2,9 +2,10 @@ from math import power
 from tty import get_number
 
 def main():
-    base = get_number("Enter base: ")
-    exponent = get_number("Enter exponent: ")
-    res = power(base, exponent)
+    m = get_number("Enter m: ")
+    e = get_number("Enter e: ")
+    n = get_number("Enter n: ")
+    res = power(m, e) % n
     print("Result:", res)
 
 if __name__ == "__main__":
