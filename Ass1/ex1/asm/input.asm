@@ -11,9 +11,9 @@ read_stdin_char:
     push rdi
     push rdx
 .body:
-    mov rdi, 0
+    xor rdi, rdi
     mov rdx, 1
-    mov rax, 0
+    xor rax, rax
     syscall
 .restore_registers:
     pop rdx

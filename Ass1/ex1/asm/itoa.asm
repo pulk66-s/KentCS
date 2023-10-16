@@ -13,8 +13,8 @@ itoa:
     push rax
     push rbx
     push r12
-    mov r12, 0
-    mov rax, 0
+    xor r12, r12
+    xor rax, rax
 .loop:
     cmp rdi, 0
     je .loop_end

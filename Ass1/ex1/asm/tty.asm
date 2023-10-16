@@ -5,10 +5,11 @@ section .text
 ;
 launch_tty:
 .setup_regs:
-    mov r12, 0  ; index of the buffer
-    mov r13, 0  ; Index of the choice
-    mov r14, 0  ; Base number
-    mov r15, 0  ; Exponent number
+    xor r12, r12    ; index of the buffer
+    xor r13, r13    ; Index of the choice
+    xor r14, r14    ; Base number
+    xor r15, r15    ; Exponent number
+    xor r10, r10    ; Module number
 
 .welcome_message:
     mov rdi, welcome_message
@@ -20,7 +21,15 @@ launch_tty:
     je .ask_base_message
     cmp r13, 1
     je .ask_exponent_message
+    cmp r13, 2
+    je .ask_module_message
     jmp .end
+
+.ask_module_message:
+    mov rdi, asking_module_buffer
+    mov rsi, asking_module_buffer_size
+    call write_stdout
+    jmp .read
 
 .ask_base_message:
     mov rdi, asking_base_buffer
@@ -50,10 +59,12 @@ launch_tty:
 .end_input:
     cmp r13, 0
     je .save_base
-    jmp .save_exp
+    cmp r13, 1
+    je .save_exp
+    jmp .save_module
 
 .save_base:
-    mov rbx, 0
+    xor rbx, rbx
 .save_base_loop:
     cmp rbx, r12
     je .end_save_base_loop
@@ -67,11 +78,11 @@ launch_tty:
     mov rsi, r12
     call atoi
     mov r14, rax
-    mov r12, 0
+    xor r12, r12
     jmp .read_message
 
 .save_exp:
-    mov rbx, 0
+    xor rbx, rbx
 .save_exp_loop:
     cmp rbx, r12
     je .end_save_exp_loop
@@ -85,7 +96,26 @@ launch_tty:
     mov rsi, r12
     call atoi
     mov r15, rax
+    xor r12, r12
     jmp .read_message
+
+.save_module:
+    xor rbx, rbx
+.save_module_loop:
+    cmp rbx, r12
+    je .end_save_module_loop
+    movzx rax, byte [tty_buffer + rbx]
+    mov [module_buffer + rbx], rax
+    inc rbx
+    jmp .save_module_loop
+.end_save_module_loop:
+    inc r13
+    mov rdi, module_buffer
+    mov rsi, r12
+    call atoi
+    mov r10, rax
+    jmp .read_message
+
 .end:
     mov rdi, print_res_msg
     mov rsi, print_res_msg_size
@@ -93,7 +123,13 @@ launch_tty:
     mov rdi, r14
     mov rsi, r15
     call math_power
+
+    xor rdx, rdx
     mov rdi, rax
+    mov rbx, r10
+    div rbx
+
+    mov rdi, rdx
     mov rsi, print_buffer
     call itoa
     mov rdi, print_buffer
@@ -103,6 +139,7 @@ launch_tty:
     mov rsi, 1
     call write_stdout
     ret
+
 
 section .data
     tty_buffer: times 100 db 0
@@ -115,12 +152,16 @@ section .data
 
     base_buffer: times 100 db 0
     exponent_buffer: times 100 db 0
+    module_buffer: times 100 db 0
 
     asking_base_buffer: db "Please enter the base: ", 0x0A
     asking_base_buffer_size: equ $ - asking_base_buffer
 
     asking_exponent_buffer: db "Please enter the exponent: ", 0x0A
     asking_exponent_buffer_size: equ $ - asking_exponent_buffer
+
+    asking_module_buffer: db "Please enter the module: ", 0x0A
+    asking_module_buffer_size: equ $ - asking_module_buffer
 
     print_buffer: times 100 db 0
     print_res_msg: db "The result is: ", 0x0A

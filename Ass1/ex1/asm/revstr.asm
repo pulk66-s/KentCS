@@ -12,7 +12,7 @@ revstr:
     push rbx
     push rcx
     push rdx
-    mov rax, 0
+    xor rax, rax
     mov rbx, rsi
     dec rbx
 .loop:

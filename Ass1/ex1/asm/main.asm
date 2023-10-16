@@ -1,9 +1,18 @@
 global _start
 _start:
     call launch_tty
+    ; mov rax, 1024
+    ; mov rbx, 1000
+    ; div rbx
+    ; mov rdi, rdx
+    ; mov rsi, res_buff
+    ; call itoa
+    ; mov rdi, res_buff
+    ; mov rsi, 10
+    ; call write_stdout
 
 _end:
-    mov rdi, 0
+    xor rdi, rdi
     mov rax, 60
     syscall
 

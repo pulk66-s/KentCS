@@ -14,9 +14,9 @@ atoi:
     push rsi
     push rdx
     push rcx
-    mov rax, 0
-    mov rdx, 0
-    mov rcx, 0
+    rox rax, rax
+    rox rdx, rdx
+    rox rcx, rcx
 
 .loop:
     movzx rdx, byte [rdi + rcx]
