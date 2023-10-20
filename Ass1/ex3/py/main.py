@@ -1,5 +1,5 @@
 from tty import get_number
-from math import find_nbit_prime
+from mymath import find_nbit_prime
 
 def main():
     n = get_number("Enter the number n: ")

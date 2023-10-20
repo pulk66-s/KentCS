@@ -2,6 +2,8 @@
 This file contains all the math functions that I will use in my programs.
 """
 
+import random
+
 def power(n: int, e: int) -> int:
     """Return the power of a to b given in parameter
     I am using a fast exponentiation algorithm.
@@ -33,7 +35,22 @@ def lower_sqrt(n: int) -> int:
         i += 1
     return i - 1
 
-def is_prime(n: int) -> bool:
+def is_probably_prime(n: int, k: int) -> bool:
+    """Return True if n is prime, False otherwise
+
+    Args:
+        n (int): number to check
+        k (int): number of iterations
+    Returns:
+        bool: True if n is probably prime, False otherwise
+    """
+    for i in range(k):
+        a = random.randint(n - 1)
+        if power(a, (n - 1)) % n != 1:
+            return False
+    return True
+
+def is_prime(n: int) -> int:
     """Return True if n is prime, False otherwise
 
     Args:
@@ -41,7 +58,11 @@ def is_prime(n: int) -> bool:
     Returns:
         bool: True if n is prime, False otherwise
     """
-    for i in range(2, lower_sqrt(n) + 1):
+    if n == 2:
+        return True
+    if n % 2 == 0:
+        return False
+    for i in range(3, lower_sqrt(n) + 1, 2):
         if n % i == 0:
             return False
     return True
@@ -54,7 +75,7 @@ def find_nbit_prime(n: int) -> int:
     Returns:
         int: the first n-bit prime number (between 2^(n-1) and 2^n)
     """
-    for i in range(power(2, n - 1), power(2, n)):
-        if is_prime(i):
-            return i
-    return -1
+    while True:
+        p = random.randint(power(2, (n - 1)), power(2, n))
+        if is_prime(p):
+            return p
